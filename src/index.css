@@ -11,3 +11,91 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  width: 80%;
+  border: 1px solid #4d4d4d;
+  padding: 35px 20px;
+  box-sizing: content-box;
+}
+.wrapper {
+  display: grid;
+  grid-template-areas:
+    "second-name second-name first-name first-name middle-name middle-name"
+    "phone phone phone country country country"
+    " . . . send-button send-button send-button"
+    "messages messages messages messages messages messages";
+  grid-gap: 10px;
+  margin: 0px;
+  width: 100%;
+}
+#second-name {
+  grid-area: second-name;
+}
+#first-name {
+  grid-area: first-name;
+}
+#middle-name {
+  grid-area: middle-name;
+}
+#phone {
+  grid-area: phone;
+}
+#country {
+  grid-area: country;
+}
+#send-button {
+  grid-area: send-button;
+  width: "100%";
+}
+#messages {
+  grid-area: messages;
+  width: "100%";
+}
+.success {
+  background: #90ee90;
+  widows: 100%;
+}
+.error {
+  background: #ff0000;
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    display: grid;
+    grid-template-areas:
+      "second-name"
+      "first-name"
+      "middle-name"
+      "phone"
+      "country"
+      "send-button"
+      "messages";
+    grid-gap: 10px;
+    margin: 0px;
+    width: 100%;
+  }
+  .form {
+    width: 80%;
+    border: none;
+    padding: 35px 20px;
+    box-sizing: content-box;
+  }
+  #send-button {
+    margin-top: 15px;
+  }
+}
