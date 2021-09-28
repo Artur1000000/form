@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
 import Field from "./components/Field";
+import "./index.css";
+import React, { useCallback, useEffect, useState } from "react";
 import SelectField from "./components/SelectField";
 import Spinner from "./components/Spinner";
 
@@ -7,89 +8,101 @@ const items = ["Таиланд", "Индонезия", "Малайзия", "Вь
 const path = "https://test.toolympus.com/api/jfe-test";
 
 export default function App() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [country, setCountry] = useState("");
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState({
+    lastName: {
+      id: "second-name",
+      value: "",
+      properties: { ru: "Фамилия", en: "lastName" }
+    },
+    firstName: {
+      id: "first-name",
+      value: "",
+      properties: { ru: "Имя", en: "firstName" }
+    },
+    middleName: {
+      id: "middle-name",
+      value: "",
+      properties: { ru: "Отчество", en: "middleName" }
+    },
+    phone: {
+      id: "phone",
+      value: "",
+      properties: { ru: "Телефон", en: "phone" }
+    },
+    country: {
+      id: "country",
+      value: "",
+      properties: { ru: "Страна", en: "country" }
+    }
+  });
+  const [sendMessage, setSendMessage] = useState(null);
   const [status, setStatus] = useState(null);
 
-  const handleFirstName = useCallback((prop) => {
-    setFirstName(prop);
-  }, []);
-
-  const handleLasttName = useCallback((prop) => {
-    setLastName(prop);
-  }, []);
-
-  const handleMiddleName = useCallback((prop) => {
-    setMiddleName(prop);
-  }, []);
-  const handlePhone = useCallback((prop) => {
-    setPhone(prop);
-  }, []);
+  const handleMessage = useCallback(
+    (prop, key) => {
+      setMessage({
+        ...message,
+        [key]: {
+          id: message[key].id,
+          value: prop,
+          properties: message[key].properties
+        }
+      });
+    },
+    [message]
+  );
 
   const send = useCallback(() => {
-    setMessage({
-      lastname: lastName,
-      firstname: firstName,
-      middlename: middleName,
-      phone: phone,
-      country: country
+    setSendMessage({
+      lastname: message.lastName.value,
+      firstname: message.firstName.value,
+      middlename: message.middleName.value,
+      phone: message.phone.value,
+      country: message.country.value
     });
-  }, [country, firstName, lastName, middleName, phone]);
+  }, [message]);
+
   useEffect(() => {
-    if (message) {
+    if (sendMessage) {
       try {
         fetch(path, {
           method: "POST",
           headers: {
             "Content-Type": "application/json;charset=utf-8"
           },
-          body: JSON.stringify(message)
+          body: JSON.stringify(sendMessage)
         }).then((data) => setStatus(data.status));
       } catch (error) {
         console.log("error send");
       }
     }
-  }, [message]);
-
+  }, [sendMessage]);
   return (
     <div className="App">
       <form className="form">
         <div className="wrapper">
-          <div id="second-name">
-            <Field
-              placeholder={"Фамилия"}
-              value={lastName}
-              handleProp={handleLasttName}
-            />
-          </div>
-          <div id="first-name">
-            <Field
-              placeholder={"Имя"}
-              value={firstName}
-              handleProp={handleFirstName}
-            />
-          </div>
-          <div id="middle-name">
-            <Field
-              placeholder={"Отчество"}
-              value={middleName}
-              handleProp={handleMiddleName}
-            />
-          </div>
-          <div id="phone">
-            <Field
-              placeholder={"Телефон"}
-              value={phone}
-              handleProp={handlePhone}
-            />
-          </div>
-          <div id="country">
-            <SelectField items={items} selected={setCountry} />
-          </div>
+          {Object.values(message).map((item) => {
+            if (item.properties.en !== "country") {
+              return (
+                <div key={item.id} id={item.id}>
+                  <Field
+                    placeholder={item.properties}
+                    value={item.value}
+                    handleProp={handleMessage}
+                  />
+                </div>
+              );
+            }
+            return (
+              <div key={item.id} id={item.id}>
+                <SelectField
+                  items={items}
+                  placeholder={item.properties}
+                  selected={handleMessage}
+                />
+              </div>
+            );
+          })}
           {status === null && (
             <div id="send-button" className="d-grid gap-2">
               <button type="button" className="btn btn-primary" onClick={send}>
